@@ -1,0 +1,37 @@
+[DEFAULT]
+ignoreip  = 127.0.0.1
+bantime   = 86400
+destemail = root@localhost
+banaction = iptables-multiport
+action    = %(action_)s
+
+# JAILS
+[ssh]
+enabled   = true
+maxretry  = 3
+
+[pam-generic]
+enabled   = true
+banaction = iptables-allports
+
+[ssh-ddos]
+enabled   = true
+
+[apache]
+enabled = true
+
+[nginx-http-auth]
+enabled = true
+
+[postfix]
+enabled  = true
+maxretry = 1
+
+[dovecot-pop3imap]
+enabled = true
+filter = dovecot-pop3imap
+action = iptables-multiport[name=dovecot-pop3imap, port="pop3,imap,993,995", protocol=tcp]
+logpath = /var/log/mail.log
+maxretry = 20
+findtime = 1200
+bantime = 1200

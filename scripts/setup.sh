@@ -42,14 +42,14 @@ contains() {
 # Main setup functions
 
 setup_root_user() {
-  echo "\e[0;32m$FUNCNAME\e[0m"
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
   echo "root:$ROOT_PASSWORD" | chpasswd
 }
 
 setup_deploy_user() {
   is_user "deploy" && return
-  echo "\e[0;32m$FUNCNAME\e[0m"
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
 
   useradd -D -s /bin/bash
@@ -67,7 +67,7 @@ setup_deploy_user() {
 
 setup_automatic_updates() {
   contains /etc/apt/apt.conf.d/10periodic "Unattended-Upgrade" && return
-  echo "\e[0;32m$FUNCNAME\e[0m"
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
 
   apt-get -y update
@@ -79,7 +79,7 @@ setup_automatic_updates() {
 
 setup_ssh() {
   is_group "ssh-user" && return
-  echo "\e[0;32m$FUNCNAME\e[0m"
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
   groupadd ssh-user
 
@@ -100,7 +100,7 @@ setup_ssh() {
 }
 
 setup_firewall() {
-  echo "\e[0;32m$FUNCNAME\e[0m"
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
   ufw default deny incoming
   ufw allow 22
@@ -112,8 +112,7 @@ setup_firewall() {
 
 setup_mail_aliases() {
   contains /etc/aliases "ops" && return
-  echo "\e[0;32m$FUNCNAME\e[0m"
-
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
   echo "root: $ROOT_EMAIL" >> /etc/aliases
   echo "ops: $OPS_EMAIL" >> /etc/aliases
@@ -123,8 +122,7 @@ setup_mail_aliases() {
 
 setup_mail_opendkim() {
   is_file /etc/opendkim.conf && return
-  echo "\e[0;32m$FUNCNAME\e[0m"
-
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
   apt-get install -y --force-yes opendkim opendkim-tools
 
@@ -164,8 +162,7 @@ setup_mail_opendkim() {
 
 setup_mail_forwarding() {
   contains /etc/postfix/main.cf "virtual_alias_domains" && return
-  echo "\e[0;32m$FUNCNAME\e[0m"
-
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
   echo "virtual_alias_domains = $DOMAIN" >> /etc/postfix/main.cf
   echo "virtual_alias_maps = hash:/etc/postfix/virtual" >> /etc/postfix/main.cf
@@ -178,13 +175,14 @@ setup_mail_forwarding() {
 
 setup_mail() {
   is_file /etc/postfix/main.cf && return
-  echo "\e[0;32m$FUNCNAME\e[0m"
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
-
+  export DEBIAN_FRONTEND=noninteractive
   debconf-set-selections <<< "postfix postfix/mailname string $HOSTNAME"
   debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
-  DEBIAN_FRONTEND=noninteractive apt-get -y install postfix
+  apt-get -y install postfix
   apt-get -y install mailutils
+  export DEBIAN_FRONTEND=
 
   # sed -e 's/inet_interfaces = all/inet_interfaces = localhost/g' /etc/postfix/main.cf > /etc/postfix/main.cf.bak && mv /etc/postfix/main.cf.bak /etc/postfix/main.cf
   service postfix restart
@@ -196,8 +194,7 @@ setup_mail() {
 
 setup_logwatch() {
   is_dir /var/cache/logwatch && return
-  echo "\e[0;32m$FUNCNAME\e[0m"
-
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
   apt-get -y --force-yes install logwatch
   mkdir /var/cache/logwatch
@@ -207,7 +204,7 @@ setup_logwatch() {
 
 setup_fail2ban() {
   is_file /etc/fail2ban/jail.local && return
-  echo "\e[0;32m$FUNCNAME\e[0m"
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
   apt-get -y --force-yes install fail2ban
   cp ${HOME}/server/templates/etc/fail2ban/jail.local /etc/fail2ban/jail.local
@@ -215,7 +212,7 @@ setup_fail2ban() {
 }
 
 setup_rootkits() {
-  echo "\e[0;32m$FUNCNAME\e[0m"
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
   apt-get -y --force-yes install lynis
   apt-get -y --force-yes install rkhunter
@@ -223,8 +220,7 @@ setup_rootkits() {
 
 setup_swap() {
   is_file /swapfile && return
-  echo "\e[0;32m$FUNCNAME\e[0m"
-
+  echo -e "\e[0;32m$FUNCNAME\e[0m"
 
   dd if=/dev/zero of=/swapfile bs=1MB count=4096
   chmod 600 /swapfile

@@ -177,12 +177,10 @@ setup_mail() {
   is_file /etc/postfix/main.cf && return
   echo -e "\e[0;32m$FUNCNAME\e[0m"
 
-  export DEBIAN_FRONTEND=noninteractive
   debconf-set-selections <<< "postfix postfix/mailname string $HOSTNAME"
   debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
-  apt-get -y install postfix
+  DEBIAN_FRONTEND=noninteractive apt-get -y install postfix
   apt-get -y install mailutils
-  export DEBIAN_FRONTEND=
 
   # sed -e 's/inet_interfaces = all/inet_interfaces = localhost/g' /etc/postfix/main.cf > /etc/postfix/main.cf.bak && mv /etc/postfix/main.cf.bak /etc/postfix/main.cf
   service postfix restart
@@ -237,16 +235,16 @@ setup() {
   setup_automatic_updates
   setup_root_user
   setup_deploy_user
+  setup_mail
+  setup_mail_aliases
+  setup_mail_opendkim
+  setup_mail_forwarding
   setup_ssh
   setup_fail2ban
   setup_firewall
   setup_rootkits
   setup_logwatch
   setup_swap
-  setup_mail
-  setup_mail_aliases
-  setup_mail_opendkim
-  setup_mail_forwarding
 }
 
 # Kick it.

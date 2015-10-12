@@ -42,7 +42,7 @@ contains() {
 # Main setup functions
 
 setup_root_user() {
-  echo "root:$ROOTPASSWORD" | chpasswd
+  echo "root:$ROOT_PASSWORD" | chpasswd
 }
 
 setup_deploy_user() {
@@ -56,7 +56,7 @@ setup_deploy_user() {
   chmod 700 /home/deploy/.ssh
   cp /home/root/.ssh/authorized_keys /home/deploy/.ssh/authorized_keys
 
-  echo "deploy:$DEPLOYPASSWORD" | chpasswd
+  echo "deploy:$DEPLOY_PASSWORD" | chpasswd
 
   usermod -a -G sudo deploy
   usermod -a -G ssh-user deploy
@@ -88,8 +88,8 @@ setup_ssh() {
 
   cd /etc/ssh
   rm ssh_host_*key*
-  ssh-keygen -t ed25519 -f ssh_host_ed25519_key < /dev/null
-  ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
+  ssh-keygen -t ed25519 -f ssh_host_ed25519_key -N '' < /dev/null
+  ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key -N '' < /dev/null
   cd ${HOME}
 
   service ssh restart
@@ -101,7 +101,7 @@ setup_firewall() {
   ufw allow 443
   ufw allow 80
   ufw allow 25
-  ufw enable
+  echo "y" | ufw enable
 }
 
 setup_mail_aliases() {
@@ -127,6 +127,9 @@ setup_mail_opendkim() {
 
   # Add the milter settings to postfix
   cp ${HOME}/server/templates/etc/postfix/main.cf /etc/postfix/main.cf
+
+  # Create the folder (normally happens on opendkim start)
+  mkdir -p /etc/opendkim
 
   # Trusted Hosts
   cp ${HOME}/server/templates/etc/opendkim/TrustedHosts /etc/opendkim/TrustedHosts

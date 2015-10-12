@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
-# Try to load in some environment
-source ./env.sh
+# Try to load in some environment settings
+source $(dirname $0)/env.sh
 
 # Helpers
 

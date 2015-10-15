@@ -3,6 +3,20 @@
 # Try to load in some environment settings
 source $(dirname $0)/env.sh
 
+setup() {
+  setup_automatic_updates
+  setup_root_user
+  setup_mail
+  setup_ssh
+  setup_fail2ban
+  setup_firewall
+  setup_rootkits
+  setup_logwatch
+  setup_swap
+  setup_deploy_user
+}
+
+
 # Helpers
 
 is_file() {
@@ -229,22 +243,6 @@ setup_swap() {
 
   echo "vm.swappiness=10" >> /etc/sysctl.conf
   echo "vm.vfs_cache_pressure=50" >> /etc/sysctl.conf
-}
-
-setup() {
-  setup_automatic_updates
-  setup_root_user
-  setup_deploy_user
-  setup_mail
-  setup_mail_aliases
-  setup_mail_opendkim
-  setup_mail_forwarding
-  setup_ssh
-  setup_fail2ban
-  setup_firewall
-  setup_rootkits
-  setup_logwatch
-  setup_swap
 }
 
 # Kick it.

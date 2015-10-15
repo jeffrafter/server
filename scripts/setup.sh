@@ -51,13 +51,14 @@ setup_deploy_user() {
   is_user "deploy" && return
   echo -e "\e[0;32m$FUNCNAME\e[0m"
 
-
   useradd -D -s /bin/bash
   useradd deploy --shell /bin/bash
   mkdir /home/deploy
   mkdir /home/deploy/.ssh
   chmod 700 /home/deploy/.ssh
-  cp /home/root/.ssh/authorized_keys /home/deploy/.ssh/authorized_keys
+  cp ${HOME}/.ssh/authorized_keys /home/deploy/.ssh/authorized_keys
+  chown deploy:deploy /home/deploy -R
+  chmod 400 /home/deploy/.ssh/authorized_keys
 
   echo "deploy:$DEPLOY_PASSWORD" | chpasswd
 
@@ -68,7 +69,6 @@ setup_deploy_user() {
 setup_automatic_updates() {
   contains /etc/apt/apt.conf.d/10periodic "Unattended-Upgrade" && return
   echo -e "\e[0;32m$FUNCNAME\e[0m"
-
 
   apt-get -y update
   apt-get -y upgrade

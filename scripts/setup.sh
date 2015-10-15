@@ -146,7 +146,7 @@ setup_mail_opendkim() {
   echo "SOCKET="inet:12301@localhost"" >> /etc/default/opendkim
 
   # Add the milter settings to postfix
-  cp ${HOME}/server/templates/etc/postfix/main.cf /etc/postfix/main.cf
+  cat ${HOME}/server/templates/etc/postfix/main.cf >> /etc/postfix/main.cf
 
   # Create the folder (normally happens on opendkim start)
   mkdir -p /etc/opendkim
@@ -191,7 +191,7 @@ setup_mail() {
   is_file /etc/postfix/main.cf && return
   echo -e "\e[0;32m$FUNCNAME\e[0m"
 
-  debconf-set-selections <<< "postfix postfix/mailname string $HOSTNAME"
+  debconf-set-selections <<< "postfix postfix/mailname string $MAIL_HOSTNAME"
   debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
   DEBIAN_FRONTEND=noninteractive apt-get -y install postfix
   apt-get -y install mailutils

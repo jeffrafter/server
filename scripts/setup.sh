@@ -53,6 +53,13 @@ contains() {
   [ $? -eq 0 ]
 }
 
+replace() {
+  local replacement=$1
+  local file=$2
+
+  sed -e "$replacement" $file > $file.bak && mv $file.bak $file
+}
+
 # Main setup functions
 
 setup_root_user() {
@@ -153,7 +160,7 @@ setup_mail_opendkim() {
 
   # Trusted Hosts
   cp ${HOME}/server/templates/etc/opendkim/TrustedHosts /etc/opendkim/TrustedHosts
-  echo "$WILDCARD_DOMAIN" >> /etc/opendkim/TrustedHosts
+  echo "*.$DOMAIN" >> /etc/opendkim/TrustedHosts
 
   # Key Table
   echo "mail._domainkey.$DOMAIN $DOMAIN:mail:/etc/opendkim/keys/$DOMAIN/mail.private" >> /etc/opendkim/KeyTable
@@ -191,12 +198,15 @@ setup_mail() {
   is_file /etc/postfix/main.cf && return
   echo -e "\e[0;32m$FUNCNAME\e[0m"
 
-  debconf-set-selections <<< "postfix postfix/mailname string $MAIL_HOSTNAME"
+  debconf-set-selections <<< "postfix postfix/mailname string $DOMAIN"
   debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
   DEBIAN_FRONTEND=noninteractive apt-get -y install postfix
   apt-get -y install mailutils
 
-  # sed -e 's/inet_interfaces = all/inet_interfaces = localhost/g' /etc/postfix/main.cf > /etc/postfix/main.cf.bak && mv /etc/postfix/main.cf.bak /etc/postfix/main.cf
+  replace "s/myhostname = $HOSTNAME/myhostname = $DOMAIN/g" /etc/postfix/main.cf
+  replace "s/mydestination = .*/mydestination = $DOMAIN, localhost/g" /etc/postfix/main.cf
+  echo "$DOMAIN" > /etc/mailname
+
   service postfix restart
 
   setup_mail_aliases

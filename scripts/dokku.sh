@@ -7,7 +7,7 @@ install() {
   echo -e "\e[0;32m$FUNCNAME\e[0m"
   wget https://raw.githubusercontent.com/progrium/dokku/v0.4.2/bootstrap.sh
   DOKKU_TAG=v0.4.2 bash bootstrap.sh
-  echo "Please open http://$hostname to complete the installation [Enter]"
+  echo "Please open http://$HOSTNAME to complete the installation [Enter]"
   read enter
 }
 
@@ -17,6 +17,10 @@ setup_dokku_ssh() {
   cp ${HOME}/.ssh/authorized_keys /home/dokku/.ssh/authorized_keys
   chmod 400 /home/dokku/.ssh/authorized_keys
   chown dokku:dokku /home/dokku/.ssh/authorized_keys
+}
+
+setup_dokku_application() {
+  dokku apps:create $HOSTNAME
 }
 
 setup_dokku_plugins() {
@@ -48,8 +52,9 @@ setup_postgres() {
 }
 
 main() {
-  install
+  # install
   setup_dokku_ssh
+  setup_dokku_application
   setup_dokku_plugins
   setup_firewall
 }

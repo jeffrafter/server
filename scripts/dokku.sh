@@ -20,7 +20,7 @@ setup_dokku_ssh() {
 }
 
 setup_dokku_application() {
-  dokku apps:create $HOSTNAME
+  dokku apps:create $APPLICATION
 }
 
 setup_dokku_plugins() {

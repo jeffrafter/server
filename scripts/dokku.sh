@@ -14,9 +14,9 @@ install() {
 setup_dokku_ssh() {
   echo -e "\e[0;32m$FUNCNAME\e[0m"
   usermod -a -G ssh-user dokku
-  cp ${HOME}/.ssh/authorized_keys /home/dokku/.ssh/authorized_keys
-  chmod 400 /home/dokku/.ssh/authorized_keys
-  chown dokku:dokku /home/dokku/.ssh/authorized_keys
+  # cp ${HOME}/.ssh/authorized_keys /home/dokku/.ssh/authorized_keys
+  # chmod 400 /home/dokku/.ssh/authorized_keys
+  # chown dokku:dokku /home/dokku/.ssh/authorized_keys
 }
 
 setup_dokku_application() {

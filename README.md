@@ -11,8 +11,8 @@ Grab the latest
 Configure your environment variables
 
     cd ${HOME}/server
-    cp script/env.sh.example script/env.sh
-    nano script/env.sh
+    cp scripts/env.sh.example scripts/env.sh
+    nano scripts/env.sh
 
 The env allows you to configure the necessary vars:
 
@@ -25,6 +25,7 @@ The env allows you to configure the necessary vars:
     VIRTUAL_EMAIL="youremail@gmail.com"
     DOMAIN="example.com"
     WILDCARD_DOMAIN="*.example.com"
+    APPLICATION=api
 
 
 Run the script:

@@ -4,6 +4,7 @@
 source $(dirname $0)/env.sh
 
 setup() {
+  setup_swap
   setup_automatic_updates
   setup_root_user
   setup_mail
@@ -12,7 +13,6 @@ setup() {
   setup_firewall
   setup_rootkits
   setup_logwatch
-  setup_swap
   setup_deploy_user
 }
 

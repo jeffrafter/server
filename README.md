@@ -30,5 +30,5 @@ The env allows you to configure the necessary vars:
 
 Run the script:
 
-    script/setup.sh
+    scripts/setup.sh
 
